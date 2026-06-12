@@ -110,42 +110,6 @@ graph TD
 
 Business logic lives entirely in the Domain and Application layers. Nothing in those layers imports from Express, Prisma, or any framework. The Infrastructure layer is the only place that knows about external systems.
 
-```mermaid
-%%{init: {'theme': 'light'}}%%
-graph TD
-    subgraph INF["Infrastructure Layer"]
-        HTTP["HTTP Routes\ncreateProjectRouter · createTaskRouter"]
-        CTRL["Controllers\nProjectController · TaskController"]
-        PRIS["Prisma Repositories\nPrismaProjectRepository · PrismaTaskRepository"]
-    end
-
-    subgraph APP["Application Layer"]
-        UC["Use Cases\nCreateTask · UpdateTaskStatus · DeleteProject · ..."]
-        PORT["Repository Interfaces\nProjectRepository · TaskRepository"]
-    end
-
-    subgraph DOM["Domain Layer"]
-        ENT["Entities — Project · Task"]
-        ERR["Domain Errors\nProjectNotFoundError · TaskNotFoundError"]
-    end
-
-    subgraph EXT["External"]
-        PG[("PostgreSQL 16")]
-        CLI["HTTP Client — Browser / Supertest"]
-        MEM["InMemoryRepository — test double"]
-    end
-
-    CLI --> HTTP
-    HTTP --> CTRL
-    CTRL --> UC
-    UC --> PORT
-    PORT -.->|prod| PRIS
-    PORT -.->|test| MEM
-    PRIS --> PG
-    UC --> ENT
-    UC --> ERR
-```
-
 The key invariant: **Use Cases depend on the `Repository` interface, never on `PrismaRepository`**. This makes them testable with `InMemoryRepository` without any mocking framework or real database.
 
 ### Request Lifecycle
