@@ -72,6 +72,7 @@ npm test
 ### System Overview
 
 ```mermaid
+%%{init: {'theme': 'light'}}%%
 graph TD
     U(["Usuario"])
 
@@ -110,6 +111,7 @@ graph TD
 Business logic lives entirely in the Domain and Application layers. Nothing in those layers imports from Express, Prisma, or any framework. The Infrastructure layer is the only place that knows about external systems.
 
 ```mermaid
+%%{init: {'theme': 'light'}}%%
 graph TD
     subgraph INF["Infrastructure Layer"]
         HTTP["HTTP Routes\ncreateProjectRouter · createTaskRouter"]
@@ -149,6 +151,7 @@ The key invariant: **Use Cases depend on the `Repository` interface, never on `P
 ### Request Lifecycle
 
 ```mermaid
+%%{init: {'theme': 'light'}}%%
 sequenceDiagram
     participant Browser
     participant Helmet
@@ -181,6 +184,7 @@ sequenceDiagram
 ## Database Schema
 
 ```mermaid
+%%{init: {'theme': 'light'}}%%
 erDiagram
     projects {
         uuid id PK "gen_random_uuid()"

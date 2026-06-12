@@ -67,7 +67,7 @@ export function TaskBoard({ tasks, projectId, onEditTask, onDeleteTask }: TaskBo
 
   return (
     <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
-      <div className="flex justify-center gap-5 overflow-x-auto pb-6 min-h-[60vh]">
+      <div className="flex gap-5 overflow-x-auto pb-6 min-h-[60vh]">
         {COLUMNS.map((status) => (
           <TaskColumn
             key={status}

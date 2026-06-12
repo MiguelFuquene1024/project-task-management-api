@@ -93,25 +93,29 @@ export function ProjectDetailPage() {
         </div>
       </div>
 
-      <div className="max-w-5xl mx-auto px-6 py-8">
+      <div className="py-8">
         {tasksLoading ? (
           <div className="flex justify-center py-20">
             <LoadingSpinner size="lg" />
           </div>
         ) : (
           <>
-            <TaskFilters
-              filters={filters}
-              activeCount={activeCount}
-              onChange={setFilters}
-              onReset={reset}
-            />
-            <TaskBoard
-              tasks={filtered}
-              projectId={projectId!}
-              onEditTask={handleEditTask}
-              onDeleteTask={handleDeleteTask}
-            />
+            <div className="max-w-5xl mx-auto px-6">
+              <TaskFilters
+                filters={filters}
+                activeCount={activeCount}
+                onChange={setFilters}
+                onReset={reset}
+              />
+            </div>
+            <div className="px-6">
+              <TaskBoard
+                tasks={filtered}
+                projectId={projectId!}
+                onEditTask={handleEditTask}
+                onDeleteTask={handleDeleteTask}
+              />
+            </div>
           </>
         )}
       </div>
