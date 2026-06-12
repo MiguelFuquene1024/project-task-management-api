@@ -214,13 +214,13 @@ project-task-management-api/
 
 ## Architectural Decisions
 
-### ADR-1: Hexagonal architecture over layered MVC
+### 1: Hexagonal architecture over layered MVC
 
 Use cases (`CreateTask`, `UpdateTaskStatus`, etc.) are plain TypeScript classes that receive repository interfaces via constructor injection. They have zero knowledge of Express or Prisma. This means the application core can be unit-tested without spinning up HTTP servers or databases.
 
 **Trade-off**: More files per feature. Accepted because the assessment explicitly targets senior-level design; the structure pays off at scale.
 
-### ADR-2: Route factory pattern for testability
+### 2: Route factory pattern for testability
 
 `createProjectRouter(repo)` and `createTaskRouter(taskRepo, projectRepo)` accept repository interfaces. The production export at module bottom injects the Prisma implementations:
 
@@ -230,15 +230,15 @@ export const projectRoutes = createProjectRouter(new PrismaProjectRepository(pri
 
 Integration tests inject `InMemoryProjectRepository` instead. No mocking framework needed; no change to `app.ts`.
 
-### ADR-3: InMemoryRepository as the test double strategy
+### 3: InMemoryRepository as the test double strategy
 
 Rather than mocking Prisma calls, each module ships an `InMemory*Repository` that implements the same interface. This enforces the interface contract at the TypeScript level — if a new method is added to `TaskRepository`, both `PrismaTaskRepository` and `InMemoryTaskRepository` must implement it or the build fails.
 
-### ADR-4: Five Kanban statuses (including BLOCKED)
+### 4: Five Kanban statuses (including BLOCKED)
 
 Standard Kanban uses three columns. This project adds `BLOCKED` and `IN_REVIEW` to reflect real engineering workflows. `BLOCKED` was chosen over `CANCELLED` because blocked tasks still belong to the active backlog; cancelled tasks warrant deletion, not a status.
 
-### ADR-5: Inline anomaly detection without a backend endpoint
+### 5: Inline anomaly detection without a backend endpoint
 
 Anomaly logic runs as a pure client-side function `getAnomaly(task: Task): Anomaly | null` inside `TaskCard`. Three anomaly types:
 
@@ -250,11 +250,11 @@ Anomaly logic runs as a pure client-side function `getAnomaly(task: Task): Anoma
 
 This avoids a dedicated AI/analytics endpoint while providing actionable signals on every card. The function is suppressed during drag overlay to avoid layout shifts.
 
-### ADR-6: Two-tier rate limiting
+### 6: Two-tier rate limiting
 
 A global limiter (200 req / 15 min) protects all routes. A tighter write limiter (30 req / 1 min) is applied only to `POST`, `PUT`, `PATCH`, `DELETE` routes. Read-heavy Kanban board refreshes are not penalized by write quotas.
 
-### ADR-7: Structured logging with correlationId
+### 7: Structured logging with correlationId
 
 Every request receives a UUID `correlationId` injected by `pino-http`. The same ID propagates to the error handler, making it trivial to correlate a client-visible error with the server log entry that produced it. Log level is derived from HTTP status: `info` for 2xx, `warn` for 4xx, `error` for 5xx.
 
