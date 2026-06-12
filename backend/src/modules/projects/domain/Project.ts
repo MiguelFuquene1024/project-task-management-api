@@ -11,6 +11,8 @@ export interface ProjectWithStats extends Project {
   tasksByStatus: {
     TODO: number;
     IN_PROGRESS: number;
+    BLOCKED: number;
+    IN_REVIEW: number;
     DONE: number;
   };
 }

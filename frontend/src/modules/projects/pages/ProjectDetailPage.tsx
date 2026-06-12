@@ -3,11 +3,13 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useProject } from '../hooks/useProjects';
 import { useTasks, useDeleteTask } from '../../tasks/hooks/useTasks';
 import { TaskBoard } from '../../tasks/components/TaskBoard';
+import { TaskFilters } from '../../tasks/components/TaskFilters';
 import { TaskFormModal } from '../../tasks/components/TaskFormModal';
 import { Button } from '../../../shared/components/Button';
 import { ConfirmDialog } from '../../../shared/components/ConfirmDialog';
 import { LoadingSpinner } from '../../../shared/components/LoadingSpinner';
 import { useDisclosure } from '../../../shared/hooks/useDisclosure';
+import { useTaskFilters } from '../../tasks/hooks/useTaskFilters';
 import type { Task } from '../../../shared/types';
 
 export function ProjectDetailPage() {
@@ -17,6 +19,7 @@ export function ProjectDetailPage() {
   const { data: project, isLoading: projectLoading } = useProject(projectId!);
   const { data: tasks = [], isLoading: tasksLoading } = useTasks(projectId!);
   const deleteTask = useDeleteTask(projectId!);
+  const { filters, setFilters, filtered, activeCount, reset } = useTaskFilters(tasks);
 
   const createTaskModal = useDisclosure();
   const editTaskModal = useDisclosure();
@@ -51,7 +54,7 @@ export function ProjectDetailPage() {
   return (
     <div className="min-h-screen bg-surface-base">
       <div className="border-b border-zinc-800 bg-zinc-900/60 backdrop-blur-sm sticky top-0 z-10">
-        <div className="max-w-[1800px] mx-auto px-6 py-4 flex items-center gap-4">
+        <div className="max-w-5xl mx-auto px-6 py-4 flex items-center gap-4">
           <button
             onClick={() => navigate('/projects')}
             className="font-mono text-xs text-zinc-500 hover:text-zinc-300 transition-colors flex items-center gap-2"
@@ -90,18 +93,26 @@ export function ProjectDetailPage() {
         </div>
       </div>
 
-      <div className="max-w-[1800px] mx-auto px-6 py-8">
+      <div className="max-w-5xl mx-auto px-6 py-8">
         {tasksLoading ? (
           <div className="flex justify-center py-20">
             <LoadingSpinner size="lg" />
           </div>
         ) : (
-          <TaskBoard
-            tasks={tasks}
-            projectId={projectId!}
-            onEditTask={handleEditTask}
-            onDeleteTask={handleDeleteTask}
-          />
+          <>
+            <TaskFilters
+              filters={filters}
+              activeCount={activeCount}
+              onChange={setFilters}
+              onReset={reset}
+            />
+            <TaskBoard
+              tasks={filtered}
+              projectId={projectId!}
+              onEditTask={handleEditTask}
+              onDeleteTask={handleDeleteTask}
+            />
+          </>
         )}
       </div>
 

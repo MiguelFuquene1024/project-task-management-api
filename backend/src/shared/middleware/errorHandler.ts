@@ -1,10 +1,11 @@
 import { Request, Response, NextFunction } from 'express';
 import { ZodError } from 'zod';
 import { AppError } from '../errors/AppError';
+import { logger } from '../logger/logger';
 
 export function errorHandler(
   err: Error,
-  _req: Request,
+  req: Request,
   res: Response,
   _next: NextFunction,
 ): void {
@@ -27,7 +28,7 @@ export function errorHandler(
     return;
   }
 
-  console.error('[Error]', err);
+  logger.error({ correlationId: req.id, err }, 'Unhandled error');
 
   res.status(500).json({
     success: false,
