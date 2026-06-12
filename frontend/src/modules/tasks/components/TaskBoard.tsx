@@ -14,7 +14,7 @@ import { EmptyState } from '../../../shared/components/EmptyState';
 import { useUpdateTaskStatus } from '../hooks/useTasks';
 import type { Task, TaskStatus } from '../../../shared/types';
 
-const COLUMNS: TaskStatus[] = ['TODO', 'IN_PROGRESS', 'DONE'];
+const COLUMNS: TaskStatus[] = ['TODO', 'IN_PROGRESS', 'BLOCKED', 'IN_REVIEW', 'DONE'];
 
 interface TaskBoardProps {
   tasks: Task[];
@@ -67,7 +67,7 @@ export function TaskBoard({ tasks, projectId, onEditTask, onDeleteTask }: TaskBo
 
   return (
     <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
-      <div className="flex gap-6 overflow-x-auto pb-6">
+      <div className="flex justify-center gap-5 overflow-x-auto pb-6 min-h-[60vh]">
         {COLUMNS.map((status) => (
           <TaskColumn
             key={status}

@@ -18,17 +18,23 @@ const statusOptions: { value: TaskStatus; label: string }[] = [
   { value: 'DONE', label: 'Done' },
 ];
 
-const priorityOptions: { value: Priority; label: string; color: string }[] = [
-  { value: 'HIGH', label: 'High', color: 'text-red-400' },
-  { value: 'MEDIUM', label: 'Medium', color: 'text-amber-400' },
-  { value: 'LOW', label: 'Low', color: 'text-emerald-400' },
+const priorityOptions: { value: Priority; label: string }[] = [
+  { value: 'HIGH', label: 'High' },
+  { value: 'MEDIUM', label: 'Medium' },
+  { value: 'LOW', label: 'Low' },
 ];
+
+function toInputDate(iso: string | null | undefined): string {
+  if (!iso) return '';
+  return iso.slice(0, 10);
+}
 
 export function TaskFormModal({ isOpen, onClose, projectId, mode, task }: TaskFormModalProps) {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [status, setStatus] = useState<TaskStatus>('TODO');
   const [priority, setPriority] = useState<Priority>('MEDIUM');
+  const [dueDate, setDueDate] = useState('');
   const [error, setError] = useState('');
 
   const createTask = useCreateTask(projectId);
@@ -41,6 +47,7 @@ export function TaskFormModal({ isOpen, onClose, projectId, mode, task }: TaskFo
       setDescription(task?.description ?? '');
       setStatus(task?.status ?? 'TODO');
       setPriority(task?.priority ?? 'MEDIUM');
+      setDueDate(toInputDate(task?.dueDate));
       setError('');
     }
   }, [isOpen, task]);
@@ -48,6 +55,9 @@ export function TaskFormModal({ isOpen, onClose, projectId, mode, task }: TaskFo
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!title.trim()) { setError('Title is required'); return; }
+
+    const dueDateIso = dueDate ? new Date(dueDate).toISOString() : null;
+
     try {
       if (mode === 'create') {
         await createTask.mutateAsync({
@@ -55,6 +65,7 @@ export function TaskFormModal({ isOpen, onClose, projectId, mode, task }: TaskFo
           description: description.trim() || null,
           status,
           priority,
+          dueDate: dueDateIso,
         });
       } else if (task) {
         await updateTask.mutateAsync({
@@ -64,6 +75,7 @@ export function TaskFormModal({ isOpen, onClose, projectId, mode, task }: TaskFo
             description: description.trim() || null,
             status,
             priority,
+            dueDate: dueDateIso,
           },
         });
       }
@@ -75,6 +87,9 @@ export function TaskFormModal({ isOpen, onClose, projectId, mode, task }: TaskFo
 
   const selectClass =
     'w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2.5 text-zinc-100 text-sm focus:outline-none focus:border-amber-400/60 transition-colors appearance-none';
+
+  const inputClass =
+    'w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2.5 text-zinc-100 text-sm placeholder-zinc-600 focus:outline-none focus:border-amber-400/60 transition-colors';
 
   return (
     <Modal
@@ -92,7 +107,7 @@ export function TaskFormModal({ isOpen, onClose, projectId, mode, task }: TaskFo
             value={title}
             onChange={(e) => { setTitle(e.target.value); setError(''); }}
             placeholder="What needs to be done?"
-            className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2.5 text-zinc-100 text-sm placeholder-zinc-600 focus:outline-none focus:border-amber-400/60 transition-colors"
+            className={inputClass}
             autoFocus
           />
           {error && <p className="text-red-400 text-xs mt-1.5">{error}</p>}
@@ -107,7 +122,7 @@ export function TaskFormModal({ isOpen, onClose, projectId, mode, task }: TaskFo
             onChange={(e) => setDescription(e.target.value)}
             placeholder="Add more context..."
             rows={3}
-            className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2.5 text-zinc-100 text-sm placeholder-zinc-600 focus:outline-none focus:border-amber-400/60 transition-colors resize-none"
+            className={`${inputClass} resize-none`}
           />
         </div>
 
@@ -116,11 +131,7 @@ export function TaskFormModal({ isOpen, onClose, projectId, mode, task }: TaskFo
             <label className="block font-display text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-2">
               Status
             </label>
-            <select
-              value={status}
-              onChange={(e) => setStatus(e.target.value as TaskStatus)}
-              className={selectClass}
-            >
+            <select value={status} onChange={(e) => setStatus(e.target.value as TaskStatus)} className={selectClass}>
               {statusOptions.map((o) => (
                 <option key={o.value} value={o.value}>{o.label}</option>
               ))}
@@ -131,16 +142,24 @@ export function TaskFormModal({ isOpen, onClose, projectId, mode, task }: TaskFo
             <label className="block font-display text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-2">
               Priority
             </label>
-            <select
-              value={priority}
-              onChange={(e) => setPriority(e.target.value as Priority)}
-              className={selectClass}
-            >
+            <select value={priority} onChange={(e) => setPriority(e.target.value as Priority)} className={selectClass}>
               {priorityOptions.map((o) => (
                 <option key={o.value} value={o.value}>{o.label}</option>
               ))}
             </select>
           </div>
+        </div>
+
+        <div>
+          <label className="block font-display text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-2">
+            Due Date
+          </label>
+          <input
+            type="date"
+            value={dueDate}
+            onChange={(e) => setDueDate(e.target.value)}
+            className={`${inputClass} [color-scheme:dark]`}
+          />
         </div>
 
         <div className="flex gap-2 justify-end pt-2">

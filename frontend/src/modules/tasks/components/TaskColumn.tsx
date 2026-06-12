@@ -25,6 +25,20 @@ export const COLUMN_CONFIG: Record<TaskStatus, ColumnConfig> = {
     dotColor: 'bg-blue-400',
     countBg: 'bg-blue-500/10 text-blue-400',
   },
+  BLOCKED: {
+    status: 'BLOCKED',
+    label: 'Blocked',
+    topBorder: 'border-t-red-500',
+    dotColor: 'bg-red-400',
+    countBg: 'bg-red-500/10 text-red-400',
+  },
+  IN_REVIEW: {
+    status: 'IN_REVIEW',
+    label: 'In Review',
+    topBorder: 'border-t-amber-500',
+    dotColor: 'bg-amber-400',
+    countBg: 'bg-amber-500/10 text-amber-400',
+  },
   DONE: {
     status: 'DONE',
     label: 'Done',
@@ -46,7 +60,7 @@ export function TaskColumn({ status, tasks, onEditTask, onDeleteTask }: TaskColu
   const config = COLUMN_CONFIG[status];
 
   return (
-    <div className="flex flex-col min-w-[300px] w-[300px] xl:min-w-[320px] xl:w-[320px]">
+    <div className="flex flex-col w-72 shrink-0">
       <div
         className={`flex items-center gap-2.5 mb-4 pb-3 border-t-2 pt-3 ${config.topBorder}`}
       >
@@ -63,7 +77,7 @@ export function TaskColumn({ status, tasks, onEditTask, onDeleteTask }: TaskColu
 
       <div
         ref={setNodeRef}
-        className={`flex flex-col gap-3 flex-1 min-h-[120px] rounded-xl p-2 -m-2 transition-colors duration-150 ${
+        className={`flex flex-col gap-2.5 flex-1 min-h-[200px] rounded-xl p-2 -m-2 transition-colors duration-150 ${
           isOver ? 'bg-zinc-800/60 ring-1 ring-zinc-600' : ''
         }`}
       >

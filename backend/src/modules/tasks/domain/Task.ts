@@ -1,4 +1,4 @@
-export type TaskStatus = 'TODO' | 'IN_PROGRESS' | 'DONE';
+export type TaskStatus = 'TODO' | 'IN_PROGRESS' | 'BLOCKED' | 'IN_REVIEW' | 'DONE';
 export type Priority = 'LOW' | 'MEDIUM' | 'HIGH';
 
 export interface Task {
@@ -8,6 +8,7 @@ export interface Task {
   description: string | null;
   status: TaskStatus;
   priority: Priority;
+  dueDate: Date | null;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -18,6 +19,7 @@ export interface CreateTaskData {
   description?: string | null;
   status?: TaskStatus;
   priority?: Priority;
+  dueDate?: Date | null;
 }
 
 export interface UpdateTaskData {
@@ -25,4 +27,5 @@ export interface UpdateTaskData {
   description?: string | null;
   status?: TaskStatus;
   priority?: Priority;
+  dueDate?: Date | null;
 }
